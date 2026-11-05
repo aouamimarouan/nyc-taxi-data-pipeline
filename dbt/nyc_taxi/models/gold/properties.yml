@@ -1,0 +1,104 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: One row per calendar date across VALID pickup and dropoff timestamps.
+    columns:
+      - name: date_key
+        data_tests: [not_null, unique]
+      - name: full_date
+        data_tests: [not_null, unique]
+
+  - name: dim_location
+    description: Official TLC zone lookup enriched with observed IDs and Unknown member (-1).
+    columns:
+      - name: location_key
+        data_tests: [not_null, unique]
+
+  - name: dim_payment_type
+    columns:
+      - name: payment_type_key
+        data_tests: [not_null, unique]
+
+  - name: dim_vendor
+    columns:
+      - name: vendor_key
+        data_tests: [not_null, unique]
+
+  - name: dim_rate_code
+    columns:
+      - name: rate_code_key
+        data_tests: [not_null, unique]
+
+  - name: fact_taxi_trips
+    description: One row per VALID source trip, monthly source partition replacement.
+    columns:
+      - name: _source_month
+        data_tests: [not_null]
+      - name: pickup_date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: dropoff_date_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: pickup_location_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_location')
+                field: location_key
+      - name: dropoff_location_key
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_location')
+                field: location_key
+      - name: payment_type_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_payment_type')
+                field: payment_type_key
+      - name: vendor_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_vendor')
+                field: vendor_key
+      - name: rate_code_key
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_rate_code')
+                field: rate_code_key
+
+  - name: agg_daily_trips
+    columns:
+      - name: _source_month
+        data_tests: [not_null]
+  - name: agg_hourly_demand
+    columns:
+      - name: _source_month
+        data_tests: [not_null]
+  - name: agg_zone_performance
+    columns:
+      - name: _source_month
+        data_tests: [not_null]
+  - name: agg_payment_analysis
+    columns:
+      - name: _source_month
+        data_tests: [not_null]
+  - name: agg_data_quality
+    columns:
+      - name: _source_month
+        data_tests: [not_null]

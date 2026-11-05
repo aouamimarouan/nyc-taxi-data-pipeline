@@ -34,3 +34,8 @@ models:
     silver:
       +materialized: table
       +file_format: delta
+      
+seeds:
+  nyc_taxi:
+    taxi_zone_lookup:
+      +schema: gold
