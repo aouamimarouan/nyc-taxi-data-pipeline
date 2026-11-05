@@ -1,0 +1,5 @@
+# The provider is installed in the Airflow image so DAGs can use the
+# Databricks SDK through an Airflow-managed connection.
+apache-airflow-providers-databricks==6.13.0
+databricks-sdk>=0.20.0,<1.0.0
+

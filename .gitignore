@@ -1,0 +1,104 @@
+
+# ======================================
+# Python / uv
+# ======================================
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# ======================================
+# Environment variables / credentials
+# ======================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.credentials
+credentials.json
+secrets.json
+profiles.yml
+**/.databrickscfg
+**/.dbt/profiles.yml
+
+# ======================================
+# dbt
+# ======================================
+**/target/
+**/dbt_packages/
+**/logs/
+**/.user.yml
+**/package-lock.yml
+
+# ======================================
+# Airflow
+# ======================================
+airflow/logs/
+airflow/airflow.db
+airflow/airflow.cfg
+airflow/webserver_config.py
+airflow/standalone_admin_password.txt
+airflow/plugins/__pycache__/
+airflow.pid
+
+# ======================================
+# Docker
+# ======================================
+docker-compose.override.yml
+*.pid
+
+# ======================================
+# Data / local staging
+# ======================================
+*.parquet
+*.csv
+*.jsonl
+*.avro
+*.orc
+*.delta
+staging/
+tmp/
+temp/
+data/raw/
+data/processed/
+
+# ======================================
+# Databricks local configuration
+# ======================================
+.databricks/
+.databricks_cli/
+.databricks-connect/
+
+# ======================================
+# Editors / OS
+# ======================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ======================================
+# Local notebooks
+# ======================================
+.ipynb_checkpoints/
+
+# ======================================
+# Temporary files
+# ======================================
+*.tmp
+*.bak
+*.swp
+*~

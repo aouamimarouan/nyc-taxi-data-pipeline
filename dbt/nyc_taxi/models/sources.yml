@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: bronze
+    database: nyc_project
+    schema: bronze
+
+    tables:
+      - name: yellow_taxi_trips
+        description: "Raw NYC Yellow Taxi trips stored as a Delta table."
