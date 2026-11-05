@@ -1,6 +1,7 @@
 """Discover and ingest new versions of NYC TLC Yellow Taxi monthly Parquet files.
 
 Airflow 2.10+ (TaskFlow dynamic task-group mapping).
+The Databricks job also runs on no-change days to reconcile pending Bronze/Silver work.
 """
 
 import hashlib
@@ -15,7 +16,6 @@ import requests
 from airflow import DAG
 from airflow.decorators import task, task_group
 from airflow.hooks.base import BaseHook
-from airflow.exceptions import AirflowSkipException
 from airflow.models import Variable
 from airflow.operators.python import get_current_context
 from databricks import sql
@@ -277,17 +277,19 @@ def ingest_month(metadata):
     cleanup_staging(downloaded, recorded)
 
 
+# CHANGED: no longer skip Databricks when there are zero newly ingested files.
 @task(retries=1, retry_delay=timedelta(minutes=2), trigger_rule="none_failed")
 def trigger_databricks_job(pending):
-    """Start existing Databricks job after mapped ingest completes.
+    """Run Databricks even on no-change days for Bronze/Silver reconciliation.
 
-    With no new files, skip. A manual DAG run can set
-    {"force_databricks_job": true} to test the handoff.
+    The upstream mapped ingestion group must have no failures. Empty mapping
+    may be SKIPPED, which is allowed by the 'none_failed' trigger rule.
     """
     context = get_current_context()
-    forced = bool((context["dag_run"].conf or {}).get("force_databricks_job", False))
-    if not pending and not forced:
-        raise AirflowSkipException("No newly ingested files; Databricks job not needed")
+    if pending:
+        print(f"{len(pending)} new or changed file version(s) discovered.")
+    else:
+        print("No new file versions. Triggering Databricks to reconcile Bronze/Silver.")
 
     # Set in Airflow UI > Admin > Variables (no job ID in source code).
     job_id = int(Variable.get("nyc_bronze_job_id"))
